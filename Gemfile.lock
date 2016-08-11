@@ -1,0 +1,38 @@
+PATH
+  remote: .
+  specs:
+    fuzzy_gherkin (0.1.0)
+      fuzzy-string-match (~> 0.9.7)
+      gherkin (~> 4.0)
+      json (~> 2.0, >= 2.0.2)
+      pry (~> 0.10.4)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    RubyInline (3.12.4)
+      ZenTest (~> 4.3)
+    ZenTest (4.11.1)
+    coderay (1.1.1)
+    fuzzy-string-match (0.9.7)
+      RubyInline (>= 3.8.6)
+    gherkin (4.0.0)
+    json (2.0.2)
+    method_source (0.8.2)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    rake (10.5.0)
+    slop (3.6.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 1.12)
+  fuzzy_gherkin!
+  rake (~> 10.0)
+
+BUNDLED WITH
+   1.12.5
