@@ -28,10 +28,7 @@ module FuzzyGherkin
       gherkin_document = parser.parse(File.read(feature_path))
       # Filter out the backgrounds of the scenarios
       # returns list of scenarios
-      gherkin_document[:feature][:children].map! do |step|
-        step unless step[:type].eql? :Background
-      end
-      gherkin_document.compact
+      gherkin_document[:feature][:children].map! { |step| step unless step[:type].eql? :Background }.compact
     end
 
     def compare(comparing_step)
