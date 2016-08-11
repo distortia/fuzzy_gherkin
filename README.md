@@ -1,8 +1,6 @@
 # FuzzyGherkin
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/fuzzy_gherkin`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Fuzzy Matching Gherkin steps to show where potential similarities may exist and where code can be refactored or combined. *WIP*
 
 ## Installation
 
@@ -22,7 +20,10 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Initialize the main class `fg = FuzzyGherkin::Main.new` and pass in the optional params of `base_step` and `threshold`
+The main class gives you access to `@threshold`, `@fsm`(the fuzzy matcher), `@similar_steps`, `@base_step`, `@features_directory`, and `@all_steps`
+
+For simple testing I added a method called `do_everything` which does what you think
 
 ## Development
 
