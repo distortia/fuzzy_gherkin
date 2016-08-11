@@ -28,7 +28,8 @@ module FuzzyGherkin
       gherkin_document = parser.parse(File.read(feature_path))
       # Filter out the backgrounds of the scenarios
       # returns list of scenarios
-      gherkin_document[:feature][:children].map! { |step| step unless step[:type].eql? :Background }.compact
+      # gherkin_document[:feature][:children].map! { |step| step unless step[:type].eql? :Background }.compact
+      gherkin_document[:feature][:children].map! { |step| step }.compact
     end
 
     def compare(comparing_step)
@@ -38,7 +39,7 @@ module FuzzyGherkin
       # 1.0 is a perfect match.
       # This means its a repeated step and we can ignore.
       if distance >= @threshold && distance != 1.0
-        @similar_steps << "Similarity: #{(distance * 100).round(2)}% - " + comparing_step
+        @similar_steps << "#{(distance * 100).round(2)}% - " + comparing_step
       else
         distance
       end
@@ -61,7 +62,7 @@ module FuzzyGherkin
     end
 
     def write_results
-      file_name = 'results.txt'
+      file_name = 'results.json'
       f = File.new(file_name, 'w+')
       f.write(JSON.pretty_generate(format_similar_steps_hash))
       f.close
