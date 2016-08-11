@@ -3,6 +3,7 @@ require 'fuzzystringmatch'
 require 'gherkin/parser'
 require 'gherkin/pickles/compiler'
 require 'json'
+require 'pry'
 
 module FuzzyGherkin
   # Main Class to keep everything in for the time being
@@ -10,29 +11,53 @@ module FuzzyGherkin
     include FuzzyStringMatch
     include Gherkin
 
-    attr_accessor :threshold, :fsm, :similar_steps, :base_step
+    attr_accessor :threshold, :fsm, :similar_steps, :base_step, :features_directory, :all_steps
 
     def initialize(base_step = 'I press the latte button', threshold = 0.80)
       @threshold = threshold.to_f
       @similar_steps = []
       @base_step = base_step
+      @all_steps = []
       @fsm = FuzzyStringMatch::JaroWinkler.create(:pure)
     end
 
-    def parse_feature(feature_file = 'example.feature')
-      parser = Gherkin::Parser.new
-      # need a way to get the feature file directory
-      # and load all feature files in directory
-      feature_path = File.expand_path(File.dirname(__FILE__)) + "/fuzzy_gherkin/#{feature_file}"
-      raise "FAILURE: File not found at #{feature_path}" unless File.file?(feature_path)
-      gherkin_document = parser.parse(File.read(feature_path))
-      # Filter out the backgrounds of the scenarios
-      # returns list of scenarios
-      # gherkin_document[:feature][:children].map! { |step| step unless step[:type].eql? :Background }.compact
-      gherkin_document[:feature][:children].map! { |step| step }.compact
+    # Directory should be project directory starting with /
+    # Example: /features/scenarios
+    def features_directory(directory = '/fuzzy_gherkin/')
+      @features_directory = File.expand_path(File.dirname(__FILE__)) + directory
     end
 
-    def compare(comparing_step)
+    def all_feature_files
+      Dir[@features_directory + '**/*.feature']
+    end
+
+    def all_steps_in_files
+      all_steps = []
+      all_feature_files.each do |file|
+        scenarios = parse_feature_file(file)
+        scenarios.each do |scenario|
+          all_steps << scenario[:steps].map! { |step| step[:text] }
+        end
+      end
+      all_steps.flatten.uniq
+    end
+
+    def compare_all_steps_in_files
+      all_steps_in_files.each do |step|
+        compare_step_to_base_step(step)
+      end
+    end
+
+    # Returns background and sceanrios in feature file
+    def parse_feature_file(feature_file)
+      parser = Gherkin::Parser.new
+      raise "FAILURE: File not found at #{feature_path}" unless File.file?(feature_file)
+      gherkin_document = parser.parse(File.read(feature_file))
+      gherkin_document[:feature][:children]
+    end
+
+    # Compares the given step to the base step
+    def compare_step_to_base_step(comparing_step)
       puts "comparing_step #{comparing_step}"
       distance = @fsm.getDistance(@base_step, comparing_step)
       puts "distance: #{distance}"
@@ -45,18 +70,16 @@ module FuzzyGherkin
       end
     end
 
-    def compare_all_steps_in_scenario(scenario)
-      scenario[:steps].each do |step|
-        compare(step[:text])
-      end
-    end
-
-    def compare_base_to_all_scenarios_in_file(scenarios)
-      scenarios.each do |scenario|
-        compare_all_steps_in_scenario(scenario)
-      end
-    end
-
+    # {
+    #   "base-step" : [
+    #     "first.feature" : [
+    #       "matching % - step that matches base"
+    #     ],
+    #     "second.feature" : [
+    #       "matching % - step that matches base"
+    #     ]
+    #   ]
+    # }
     def format_similar_steps_hash
       { @base_step => @similar_steps.uniq }
     end
@@ -70,8 +93,8 @@ module FuzzyGherkin
     end
 
     def do_everything
-      all_scenarios = parse_feature
-      compare_base_to_all_scenarios_in_file(all_scenarios)
+      features_directory
+      compare_all_steps_in_files
       write_results
     end
   end
