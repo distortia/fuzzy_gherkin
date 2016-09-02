@@ -13,14 +13,10 @@ gem install fuzzy_gherkin
 The gem is a command line app that will search for your feature files in the directory you run the command in. 
 The output will be spit into a json file sorted by similarity %s. 
 
-`fuzzy_gherkin compare "Step I want to compare", 0.85`
-
-#### Optional Arguments
-
-* threshold [0.0-1.0] Defaults to 0.80.
+The compare command is broken into two parts, the base step and the threshold. Threshold will default to 0.80.
 
 ```ruby 
-fuzzy_gherkin "Step you want to compare against", [threshold from 0.00 to 1.00(optional)]
+fuzzy_gherkin compare "Step you want to compare against", 0.85
 ```
 
 ## Contributing
