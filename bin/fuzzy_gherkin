@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "fuzzy_gherkin"
+
+FuzzyGherkin::Main.start(ARGV)
