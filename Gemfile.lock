@@ -18,7 +18,7 @@ GEM
     fuzzy-string-match (0.9.7)
       RubyInline (>= 3.8.6)
     gherkin (4.0.0)
-    json (2.0.2)
+    json (2.6.1)
     method_source (0.8.2)
     pry (0.10.4)
       coderay (~> 1.1.0)
